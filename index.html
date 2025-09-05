@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GERENCIATMA - Calculadora de Tempo Médio de Atendimento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: #2d3436;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            perspective: 1000px;
+        }
+        
+        /* Cabeçalho com logo */
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            animation: fadeIn 1s ease-out;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border: 3px solid white;
+        }
+        
+        .logo i {
+            font-size: 30px;
+            color: white;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+        
+        .logo-subtitle {
+            font-size: 14px;
+            color: #636e72;
+            font-weight: 500;
+        }
+        
+        .counter-container {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 15px;
+            padding: 15px 20px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-width: 150px;
+        }
+        
+        .counter-label {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+        
+        .counter-value {
+            font-size: 28px;
+            font-weight: 700;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-out;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
+        }
+        
+        .description {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 300;
+        }
+        
+        .cards-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+        
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 35px;
+            width: 100%;
+            max-width: 500px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transform-style: preserve-3d;
+            animation: cardAppear 0.8s ease-out;
+            transition: transform 0.5s, box-shadow 0.5s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+        
+        .card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-icon {
+            font-size: 2.2rem;
+            margin-right: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #2d3436;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: #2d3436;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 12px;
+            background: #f5f7fa;
+            color: #2d3436;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            background: white;
+            border: 2px solid #4facfe;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.1);
+            transform: scale(1.02);
+        }
+        
+        input::placeholder {
+            color: rgba(45, 52, 54, 0.4);
+        }
+        
+        .btn-3d {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            border: none;
+            padding: 18px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            transform: translateY(0);
+            display: inline-block;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+        }
+        
+        .btn-3d:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn-3d:hover::before {
+            left: 100%;
+        }
+        
+        .btn-3d:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .resultado {
+            margin-top: 25px;
+            padding: 25px;
+            background: #f5f7fa;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            animation: fadeIn 0.8s ease-out;
+            border-left: 5px solid #4facfe;
+        }
+        
+        .resultado h3 {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            color: #2d3436;
+        }
+        
+        .tma-value {
+            font-size: 2.4rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 10px 0;
+            display: block;
+        }
+        
+        .tma-details {
+            color: #636e72;
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .data-table th, .data-table td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid #f1f2f6;
+        }
+        
+        .data-table th {
+            background: #4facfe;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table tr:hover {
+            background: #f5f7fa;
+        }
+        
+        .btn-delete {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+        
+        .btn-delete:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .floating-elements {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .floating-element {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 15s infinite linear;
+        }
+        
+        .floating-element:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+            animation-duration: 25s;
+        }
+        
+        .floating-element:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 80%;
+            animation-delay: -2s;
+            animation-duration: 20s;
+        }
+        
+        .floating-element:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 60%;
+            left: 5%;
+            animation-delay: -4s;
+            animation-duration: 18s;
+        }
+        
+        .floating-element:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 20%;
+            left: 75%;
+            animation-delay: -6s;
+            animation-duration: 22s;
+        }
+        
+        .stats-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .stat-box {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+            border-top: 4px solid #4facfe;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 1rem;
+            color: #636e72;
+        }
+        
+        .calendar-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .calendar {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #4facfe;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-cell {
+            padding: 8px;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .calendar-cell:hover {
+            background: #f0f7ff;
+        }
+        
+        .calendar-cell.selected {
+            background: #4facfe;
+            color: white;
+        }
+        
+        .calendar-cell.has-data {
+            background: #e6f7ff;
+            font-weight: 500;
+        }
+        
+        .calendar-cell.below-target {
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        
+        .calendar-cell.empty {
+            background: transparent;
+            cursor: default;
+        }
+        
+        .day-name {
+            font-weight: 600;
+            color: #4facfe;
+            text-align: center;
+        }
+        
+        .meta-tag {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .progress-container {
+            width: 100%;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: linear-gradient(90deg, #4caf50, #8bc34a);
+            border-radius: 10px;
+            transition: width 0.5s ease-in-out;
+        }
+        
+        .progress-text {
+            text-align: center;
+            font-weight: 500;
+            color: #4caf50;
+            margin-top: 5px;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                border-radius: 50%;
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+                border-radius: 40%;
+            }
+            100% {
+                transform: translateY(0) rotate(360deg);
+                border-radius: 50%;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: rotateX(20deg) translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: rotateX(0) translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .logo-container {
+                justify-content: center;
+            }
+            
+            .cards-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .card {
+                max-width: 100%;
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .card-title {
+                font-size: 1.5rem;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            .calendar-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+        <div class="floating-element"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Cabeçalho com logo e contador -->
+        <div class="header-container">
+            <div class="logo-container">
+                <div class="logo">
+                    <i class="fas fa-stopwatch"></i>
+                </div>
+                <div class="logo-text">
+                    <div class="logo-title">GERENCIATMA</div>
+                    <div class="logo-subtitle">Sistema de Gestão de Tempo Médio de Atendimento</div>
+                </div>
+            </div>
+            
+            <div class="counter-container">
+                <div class="counter-label">Total de Registros</div>
+                <div id="totalRegistros" class="counter-value">0</div>
+            </div>
+        </div>
+        
+        <header>
+            <h1>Calculadora de TMA com Meta</h1>
+            <p class="description">Acompanhe seu TMA diário e veja quando está abaixo da meta de 10 minutos</p>
+        </header>
+        
+        <div class="cards-container">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-calendar-day card-icon"></i>
+                    <h2 class="card-title">Inserir TMA Diário</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dataSelecionada"><i class="fas fa-calendar-alt"></i> Selecione o Dia:</label>
+                    <input type="date" id="dataSelecionada">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tmaDiario"><i class="fas fa-stopwatch"></i> TMA do Dia (minutos):</label>
+                    <input type="number" id="tmaDiario" min="0" step="0.01" placeholder="Ex: 8.5">
+                </div>
+                
+                <button id="adicionarTma" class="btn-3d">
+                    <i class="fas fa-plus-circle"></i> Adicionar TMA
+                </button>
+                
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-label">Média do Mês</div>
+                        <div id="mediaMensal" class="stat-value">0.00</div>
+                        <div class="stat-label">minutos</div>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <div class="stat-label">Dias Abaixo da Meta</div>
+                        <div id="diasAbaixoMeta" class="stat-value">0</div>
+                        <div class="stat-label">de <span id="totalDias">0</span> dias</div>
+                    </div>
+                </div>
+                
+                <div class="progress-container">
+                    <div id="progressBar" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div id="progressText" class="progress-text">0% dos dias abaixo da meta</div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line card-icon"></i>
+                    <h2 class="card-title">Visualização Mensal</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mesSelecionado"><i class="fas fa-calendar"></i> Selecione o Mês:</label>
+                    <input type="month" id="mesSelecionado">
+                </div>
+                
+                <div class="calendar-container">
+                    <div class="calendar">
+                        <div class="calendar-header" id="calendarHeader">Junho 2023</div>
+                        <div class="calendar-grid" id="calendarGrid">
+                            <!-- Dias da semana -->
+                            <div class="day-name">Dom</div>
+                            <div class="day-name">Seg</div>
+                            <div class="day-name">Ter</div>
+                            <div class="day-name">Qua</div>
+                            <div class="day-name">Qui</div>
+                            <div class="day-name">Sex</div>
+                            <div class="day-name">Sáb</div>
+                            
+                            <!-- Dias do mês serão inseridos via JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 20px;"><i class="fas fa-history"></i> Registros do Mês</h3>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>TMA (minutos)</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaRegistros">
+                            <!-- Os registros serão inseridos aqui via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos do DOM
+            const dataSelecionadaInput = document.getElementById('dataSelecionada');
+            const tmaDiarioInput = document.getElementById('tmaDiario');
+            const adicionarTmaBtn = document.getElementById('adicionarTma');
+            const mesSelecionadoInput = document.getElementById('mesSelecionado');
+            const mediaMensalSpan = document.getElementById('mediaMensal');
+            const diasAbaixoMetaSpan = document.getElementById('diasAbaixoMeta');
+            const totalDiasSpan = document.getElementById('totalDias');
+            const totalRegistrosSpan = document.getElementById('totalRegistros');
+            const calendarHeader = document.getElementById('calendarHeader');
+            const calendarGrid = document.getElementById('calendarGrid');
+            const tabelaRegistros = document.getElementById('tabelaRegistros');
+            const progressBar = document.getElementById('progressBar');
+            const progressText = document.getElementById('progressText');
+            
+            // Inicializar data atual
+            const hoje = new Date();
+            const mesAtual = hoje.getFullYear() + '-' + String(hoje.getMonth() + 1).padStart(2, '0');
+            dataSelecionadaInput.value = formatarData(hoje);
+            mesSelecionadoInput.value = mesAtual;
+            
+            // Carregar registros do localStorage
+            carregarRegistros();
+            atualizarCalendario();
+            atualizarContador();
+            
+            // Event Listeners
+            adicionarTmaBtn.addEventListener('click', adicionarTMA);
+            mesSelecionadoInput.addEventListener('change', function() {
+                carregarRegistros();
+                atualizarCalendario();
+            });
+            
+            // Função para formatar data como YYYY-MM-DD
+            function formatarData(data) {
+                const ano = data.getFullYear();
+                const mes = String(data.getMonth() + 1).padStart(2, '0');
+                const dia = String(data.getDate()).padStart(2, '0');
+                return `${ano}-${mes}-${dia}`;
+            }
+            
+            // Função para atualizar o contador de registros
+            function atualizarContador() {
+                const todosRegistros = JSON.parse(localStorage.getItem('tmaRegistros') || '{}');
+                const total = Object.keys(todosRegistros).length;
+                totalRegistrosSpan.textContent = total;
+                
+                // Animação do contador
+                animateValue(totalRegistrosSpan, parseInt(totalRegistrosSpan.textContent), total, 500);
+            }
+            
+            // Função para adicionar TMA
+            function adicionarTMA() {
+                const data = dataSelecionadaInput.value;
+                const tma = parseFloat(tmaDiarioInput.value);
+                
+                if (!data || isNaN(tma) || tma <= 0) {
+                    alert('Por favor, insira uma data e um valor de TMA válido.');
+                    return;
+                }
+                
+                // Obter registros existentes
+                let registros = JSON.parse(localStorage.getItem('tmaRegistros') || '{}');
+                
+                // Adicionar novo registro
+                registros[data] = {
+                    data: data,
+                    tma: tma,
+                    abaixoMeta: tma < 10 // Verificar se está abaixo da meta
+                };
+                
+                // Salvar no localStorage
+                localStorage.setItem('tmaRegistros', JSON.stringify(registros));
+                
+                // Recarregar a tabela e atualizar estatísticas
+                carregarRegistros();
+                atualizarCalendario();
+                atualizarContador();
+                
+                // Limpar campo de TMA
+                tmaDiarioInput.value = '';
+                
+                // Feedback visual
+                adicionarTmaBtn.innerHTML = '<i class="fas fa-check"></i> Adicionado!';
+                adicionarTmaBtn.style.background = tma < 10 ? 
+                    'linear-gradient(135deg, #4caf50 0%, #2e7d32 100%)' : 
+                    'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                    
+                setTimeout(() => {
+                    adicionarTmaBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Adicionar TMA';
+                    adicionarTmaBtn.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+                }, 1500);
+            }
+            
+            // Função para carregar registros do localStorage
+            function carregarRegistros() {
+                const mesAno = mesSelecionadoInput.value;
+                const [ano, mes] = mesAno.split('-');
+                
+                // Obter registros do localStorage
+                const todosRegistros = JSON.parse(localStorage.getItem('tmaRegistros') || '{}');
+                
+                // Filtrar registros pelo mês/ano selecionado
+                const registrosFiltrados = Object.values(todosRegistros).filter(registro => {
+                    const [regAno, regMes, regDia] = registro.data.split('-');
+                    return regAno === ano && regMes === mes;
+                });
+                
+                // Ordenar registros por data (mais recente primeiro)
+                registrosFiltrados.sort((a, b) => {
+                    return new Date(b.data) - new Date(a.data);
+                });
+                
+                // Limpar tabela
+                tabelaRegistros.innerHTML = '';
+                
+                // Calcular estatísticas
+                let somaTma = 0;
+                let count = registrosFiltrados.length;
+                let abaixoMetaCount = 0;
+                
+                // Adicionar registros à tabela e calcular soma
+                registrosFiltrados.forEach(registro => {
+                    somaTma += registro.tma;
+                    if (registro.tma < 10) abaixoMetaCount++;
+                    
+                    const tr = document.createElement('tr');
+                    const dataFormatada = formatarDataExibicao(registro.data);
+                    const status = registro.tma < 10 ? 
+                        '<span style="color: #4caf50;">Abaixo da Meta<span class="meta-tag">ABAIXO DA META</span></span>' : 
+                        '<span style="color: #f44336;">Acima da Meta</span>';
+                    
+                    tr.innerHTML = `
+                        <td>${dataFormatada}</td>
+                        <td>${registro.tma.toFixed(2)} min</td>
+                        <td>${status}</td>
+                        <td>
+                            <button class="btn-delete" onclick="excluirRegistro('${registro.data}')">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    `;
+                    
+                    tabelaRegistros.appendChild(tr);
+                });
+                
+                // Calcular e exibir média
+                const media = count > 0 ? somaTma / count : 0;
+                mediaMensalSpan.textContent = media.toFixed(2);
+                diasAbaixoMetaSpan.textContent = abaixoMetaCount;
+                totalDiasSpan.textContent = count;
+                
+                // Atualizar barra de progresso
+                const percentualAbaixoMeta = count > 0 ? (abaixoMetaCount / count) * 100 : 0;
+                progressBar.style.width = `${percentualAbaixoMeta}%`;
+                progressText.textContent = `${percentualAbaixoMeta.toFixed(1)}% dos dias abaixo da meta`;
+                
+                // Animação para atualização dos valores
+                animateValue(mediaMensalSpan, parseFloat(mediaMensalSpan.textContent), media, 500);
+                
+                // Se não houver registros, adicionar uma mensagem
+                if (count === 0) {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td colspan="4" style="text-align: center;">Nenhum registro encontrado para este mês.</td>`;
+                    tabelaRegistros.appendChild(tr);
+                    
+                    progressBar.style.width = '0%';
+                    progressText.textContent = '0% dos dias abaixo da meta';
+                }
+            }
+            
+            // Função para atualizar o calendário
+            function atualizarCalendario() {
+                const mesAno = mesSelecionadoInput.value;
+                const [ano, mes] = mesAno.split('-');
+                
+                // Obter registros do localStorage
+                const todosRegistros = JSON.parse(localStorage.getItem('tmaRegistros') || '{}');
+                
+                // Atualizar cabeçalho do calendário
+                const nomeMes = new Date(ano, mes - 1).toLocaleString('pt-BR', { month: 'long' });
+                calendarHeader.textContent = `${nomeMes} ${ano}`;
+                
+                // Limpar calendário (exceto os dias da semana)
+                while (calendarGrid.children.length > 7) {
+                    calendarGrid.removeChild(calendarGrid.lastChild);
+                }
+                
+                // Obter primeiro dia do mês e quantos dias tem o mês
+                const primeiroDia = new Date(ano, mes - 1, 1);
+                const ultimoDia = new Date(ano, mes, 0);
+                const diasNoMes = ultimoDia.getDate();
+                const diaInicio = primeiroDia.getDay(); // 0 = Domingo, 1 = Segunda, etc.
+                
+                // Adicionar células vazias para os dias antes do primeiro dia do mês
+                for (let i = 0; i < diaInicio; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.classList.add('calendar-cell', 'empty');
+                    calendarGrid.appendChild(emptyCell);
+                }
+                
+                // Adicionar os dias do mês
+                for (let dia = 1; dia <= diasNoMes; dia++) {
+                    const data = `${ano}-${mes}-${String(dia).padStart(2, '0')}`;
+                    const registro = todosRegistros[data];
+                    const temRegistro = registro !== undefined;
+                    const abaixoMeta = temRegistro && registro.tma < 10;
+                    
+                    const dayCell = document.createElement('div');
+                    dayCell.classList.add('calendar-cell');
+                    dayCell.textContent = dia;
+                    
+                    if (temRegistro) {
+                        if (abaixoMeta) {
+                            dayCell.classList.add('below-target');
+                            dayCell.title = `TMA: ${registro.tma.toFixed(2)} minutos (Abaixo da meta)`;
+                        } else {
+                            dayCell.classList.add('has-data');
+                            dayCell.title = `TMA: ${registro.tma.toFixed(2)} minutos`;
+                        }
+                    }
+                    
+                    // Destacar o dia atual
+                    const hojeFormatado = formatarData(new Date());
+                    if (data === hojeFormatado) {
+                        dayCell.classList.add('selected');
+                    }
+                    
+                    calendarGrid.appendChild(dayCell);
+                }
+            }
+            
+            // Função para formatar data para exibição (DD/MM/YYYY)
+            function formatarDataExibicao(dataString) {
+                const [ano, mes, dia] = dataString.split('-');
+                return `${dia}/${mes}/${ano}`;
+            }
+            
+            // Função para animar valores numéricos
+            function animateValue(element, start, end, duration) {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    if (element.classList.contains('counter-value')) {
+                        element.textContent = Math.floor(progress * (end - start) + start);
+                    } else {
+                        element.textContent = (progress * (end - start) + start).toFixed(2);
+                    }
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            }
+            
+            // Função para excluir registro
+            window.excluirRegistro = function(data) {
+                if (confirm('Tem certeza que deseja excluir este registro?')) {
+                    let registros = JSON.parse(localStorage.getItem('tmaRegistros') || '{}');
+                    delete registros[data];
+                    localStorage.setItem('tmaRegistros', JSON.stringify(registros));
+                    carregarRegistros();
+                    atualizarCalendario();
+                    atualizarContador();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
