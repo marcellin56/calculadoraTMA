@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de TMA - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --sidebar-width: 280px;
+            --header-height: 70px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #2d3436;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .dashboard {
+            display: flex;
+            flex-wrap: wrap;
+            padding: 20px;
+            gap: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .card-icon {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+        }
+        
+        .btn {
+            padding: 14px 25px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .stat-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .status-above {
+            background: #e7f5f0;
+            color: #0ca678;
+        }
+        
+        .status-below {
+            background: #fff4e6;
+            color: #f76707;
+        }
+        
+        .meta-info {
+            background: #e7f5ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .card {
+                min-width: 100%;
+            }
+            
+            .stats-container {
+                flex-direction: column;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Calculadora de TMA - Dashboard</h1>
+            <p class="description">Acompanhe seu Tempo Médio de Atendimento e performance</p>
+        </header>
+        
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-calculator card-icon"></i>
+                    <h2 class="card-title">Registrar TMA Diário</h2>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dataRegistro">Data:</label>
+                    <input type="date" id="dataRegistro">
+                </div>
+                
+                <div class="form-group">
+                    <label for="tmaValor">TMA (minutos):</label>
+                    <input type="number" id="tmaValor" min="0" step="0.1" placeholder="Ex: 12.5">
+                </div>
+                
+                <button class="btn btn-primary" id="btnRegistrar">
+                    <i class="fas fa-save"></i> Registrar TMA
+                </button>
+                
+                <div class="meta-info">
+                    <p><strong>Meta definida:</strong> TMA abaixo de 10 minutos</p>
+                    <p><small>Valores abaixo de 10 min são considerados acima da meta. Valores acima são considerados abaixo da meta.</small></p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-chart-line card-icon"></i>
+                    <h2 class="card-title">Estatísticas do Mês</h2>
+                </div>
+                
+                <div class="stats-container">
+                    <div class="stat-box">
+                        <div class="stat-label">Média Atual</div>
+                        <div class="stat-value" id="mediaAtual">0.0</div>
+                        <div class="stat-label">minutos</div>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <div class="stat-label">Dias Registrados</div>
+                        <div class="stat-value" id="diasRegistrados">0</div>
+                        <div class="stat-label">de 30 dias</div>
+                    </div>
+                    
+                    <div class="stat-box">
+                        <div class="stat-label">Acima da Meta</div>
+                        <div class="stat-value" id="acimaMeta">0</div>
+                        <div class="stat-label">dias</div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="tmaChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-history card-icon"></i>
+                <h2 class="card-title">Histórico de Registros</h2>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>TMA (minutos)</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historicoBody">
+                        <tr>
+                            <td colspan="4" style="text-align: center;">Nenhum registro encontrado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos do DOM
+            const dataRegistro = document.getElementById('dataRegistro');
+            const tmaValor = document.getElementById('tmaValor');
+            const btnRegistrar = document.getElementById('btnRegistrar');
+            const mediaAtual = document.getElementById('mediaAtual');
+            const diasRegistrados = document.getElementById('diasRegistrados');
+            const acimaMeta = document.getElementById('acimaMeta');
+            const historicoBody = document.getElementById('historicoBody');
+            
+            // Configurar data atual como padrão
+            const hoje = new Date();
+            dataRegistro.value = formatarData(hoje);
+            
+            // Inicializar gráfico
+            const ctx = document.getElementById('tmaChart').getContext('2d');
+            const tmaChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'TMA Diário (minutos)',
+                        data: [],
+                        borderColor: '#4361ee',
+                        backgroundColor: 'rgba(67, 97, 238, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }, {
+                        label: 'Meta (10 min)',
+                        data: [],
+                        borderColor: '#f8961e',
+                        borderWidth: 1,
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointStyle: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Minutos'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Carregar dados iniciais
+            carregarDados();
+            
+            // Event Listeners
+            btnRegistrar.addEventListener('click', registrarTMA);
+            
+            // Função para formatar data como YYYY-MM-DD
+            function formatarData(data) {
+                const ano = data.getFullYear();
+                const mes = String(data.getMonth() + 1).padStart(2, '0');
+                const dia = String(data.getDate()).padStart(2, '0');
+                return `${ano}-${mes}-${dia}`;
+            }
+            
+            // Função para formatar data para exibição
+            function formatarDataExibicao(dataString) {
+                const [ano, mes, dia] = dataString.split('-');
+                return `${dia}/${mes}/${ano}`;
+            }
+            
+            // Função para registrar um novo TMA
+            function registrarTMA() {
+                const data = dataRegistro.value;
+                const tma = parseFloat(tmaValor.value);
+                
+                if (!data || isNaN(tma) || tma <= 0) {
+                    alert('Por favor, insira uma data e um valor de TMA válido.');
+                    return;
+                }
+                
+                // Obter registros existentes
+                let registros = JSON.parse(localStorage.getItem('tmaRegistros')) || [];
+                
+                // Verificar se já existe registro para esta data
+                const indexExistente = registros.findIndex(registro => registro.data === data);
+                
+                if (indexExistente !== -1) {
+                    if (!confirm('Já existe um registro para esta data. Deseja substituí-lo?')) {
+                        return;
+                    }
+                    // Remover registro existente
+                    registros.splice(indexExistente, 1);
+                }
+                
+                // Adicionar novo registro
+                registros.push({
+                    data: data,
+                    tma: tma,
+                    acimaMeta: tma < 10 // CORREÇÃO: TMA menor que 10 está acima da meta
+                });
+                
+                // Ordenar por data
+                registros.sort((a, b) => new Date(a.data) - new Date(b.data));
+                
+                // Salvar no localStorage
+                localStorage.setItem('tmaRegistros', JSON.stringify(registros));
+                
+                // Recarregar dados
+                carregarDados();
+                
+                // Limpar campo de TMA
+                tmaValor.value = '';
+                
+                // Feedback visual
+                btnRegistrar.innerHTML = '<i class="fas fa-check"></i> Registrado!';
+                setTimeout(() => {
+                    btnRegistrar.innerHTML = '<i class="fas fa-save"></i> Registrar TMA';
+                }, 2000);
+            }
+            
+            // Função para carregar e exibir dados
+            function carregarDados() {
+                const registros = JSON.parse(localStorage.getItem('tmaRegistros')) || [];
+                
+                // Atualizar estatísticas
+                atualizarEstatisticas(registros);
+                
+                // Atualizar gráfico
+                atualizarGrafico(registros);
+                
+                // Atualizar tabela
+                atualizarTabela(registros);
+            }
+            
+            // Função para atualizar estatísticas
+            function atualizarEstatisticas(registros) {
+                if (registros.length === 0) {
+                    mediaAtual.textContent = '0.0';
+                    diasRegistrados.textContent = '0';
+                    acimaMeta.textContent = '0';
+                    return;
+                }
+                
+                // Calcular média
+                const soma = registros.reduce((total, registro) => total + registro.tma, 0);
+                const media = soma / registros.length;
+                mediaAtual.textContent = media.toFixed(1);
+                
+                // Contar dias registrados
+                diasRegistrados.textContent = registros.length;
+                
+                // Contar dias acima da meta (TMA < 10)
+                const acima = registros.filter(registro => registro.acimaMeta).length;
+                acimaMeta.textContent = acima;
+            }
+            
+            // Função para atualizar o gráfico
+            function atualizarGrafico(registros) {
+                if (registros.length === 0) {
+                    tmaChart.data.labels = [];
+                    tmaChart.data.datasets[0].data = [];
+                    tmaChart.data.datasets[1].data = [];
+                    tmaChart.update();
+                    return;
+                }
+                
+                // Preparar dados para o gráfico
+                const labels = registros.map(registro => {
+                    const data = new Date(registro.data);
+                    return `${data.getDate()}/${data.getMonth() + 1}`;
+                });
+                
+                const dadosTMA = registros.map(registro => registro.tma);
+                
+                // Linha de meta (10 minutos)
+                const dadosMeta = new Array(registros.length).fill(10);
+                
+                // Atualizar gráfico
+                tmaChart.data.labels = labels;
+                tmaChart.data.datasets[0].data = dadosTMA;
+                tmaChart.data.datasets[1].data = dadosMeta;
+                tmaChart.update();
+            }
+            
+            // Função para atualizar a tabela
+            function atualizarTabela(registros) {
+                if (registros.length === 0) {
+                    historicoBody.innerHTML = '<tr><td colspan="4" style="text-align: center;">Nenhum registro encontrado</td></tr>';
+                    return;
+                }
+                
+                // Ordenar por data (mais recente primeiro)
+                registros.sort((a, b) => new Date(b.data) - new Date(a.data));
+                
+                let html = '';
+                registros.forEach(registro => {
+                    const status = registro.acimaMeta ? 
+                        '<span class="status-badge status-above">Acima da Meta</span>' : 
+                        '<span class="status-badge status-below">Abaixo da Meta</span>';
+                    
+                    html += `
+                        <tr>
+                            <td>${formatarDataExibicao(registro.data)}</td>
+                            <td>${registro.tma.toFixed(1)}</td>
+                            <td>${status}</td>
+                            <td>
+                                <button class="btn btn-sm" onclick="editarRegistro('${registro.data}')">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="btn btn-sm" onclick="excluirRegistro('${registro.data}')">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                historicoBody.innerHTML = html;
+            }
+            
+            // Funções globais para ações (precisam ser acessíveis pelo onclick)
+            window.editarRegistro = function(data) {
+                const registros = JSON.parse(localStorage.getItem('tmaRegistros')) || [];
+                const registro = registros.find(r => r.data === data);
+                
+                if (registro) {
+                    dataRegistro.value = registro.data;
+                    tmaValor.value = registro.tma;
+                    
+                    // Rolagem suave até o formulário
+                    document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+            
+            window.excluirRegistro = function(data) {
+                if (confirm('Tem certeza que deseja excluir este registro?')) {
+                    let registros = JSON.parse(localStorage.getItem('tmaRegistros')) || [];
+                    registros = registros.filter(registro => registro.data !== data);
+                    localStorage.setItem('tmaRegistros', JSON.stringify(registros));
+                    carregarDados();
+                }
+            };
+        });
+    </script>
+</body>
+</html>
